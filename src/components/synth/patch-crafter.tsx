@@ -19,9 +19,20 @@ type PatchCrafterProps = {
   onPatch: (patch: Patch) => void;
   onPreview: () => void;
   live: boolean;
+  locked?: boolean;
+  needsKey?: boolean;
+  apiKey?: string;
 };
 
-export function PatchCrafter({ patch, onPatch, onPreview, live }: PatchCrafterProps) {
+export function PatchCrafter({
+  patch,
+  onPatch,
+  onPreview,
+  live,
+  locked = false,
+  needsKey = false,
+  apiKey = "",
+}: PatchCrafterProps) {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +43,9 @@ export function PatchCrafter({ patch, onPatch, onPreview, live }: PatchCrafterPr
     setLoading(true);
     setError(null);
     try {
-      const result = await craftPatch({ data: { prompt: description } });
+      const result = await craftPatch({
+        data: { prompt: description, apiKey: needsKey ? apiKey : undefined },
+      });
       if (!result.ok) {
         setError(result.error);
         return;
@@ -65,18 +78,27 @@ export function PatchCrafter({ patch, onPatch, onPreview, live }: PatchCrafterPr
           placeholder="Describe an instrument — rusty Rhodes, distant choir, rubber bass…"
           className="h-11 min-w-0 flex-1 rounded-md bg-surface-2 px-3.5 text-base text-fg shadow-border placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
         />
-        <Button type="submit" disabled={loading || prompt.trim().length < 2} className="shrink-0">
+        <Button
+          type="submit"
+          disabled={locked || needsKey || loading || prompt.trim().length < 2}
+          className="shrink-0"
+        >
           <Wand2 className="size-4" aria-hidden="true" />
           {loading ? "Designing…" : "Craft patch"}
         </Button>
       </form>
+      {locked ? (
+        <p className="text-sm text-muted">Designer unlocks with Patchform lifetime or the Forge Pass.</p>
+      ) : needsKey ? (
+        <p className="text-sm text-muted">Paste your xAI key above to craft.</p>
+      ) : null}
       <div className="flex max-w-full gap-2 overflow-x-auto pb-0.5">
         {EXAMPLES.map((example) => (
           <button
             key={example}
             type="button"
             className="chip"
-            disabled={loading}
+            disabled={locked || needsKey || loading}
             onClick={() => {
               setPrompt(example);
               void submit(example);

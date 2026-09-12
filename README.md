@@ -2,24 +2,24 @@
 
 Playable analog-style synthesizer in the browser.
 
-**Live:** after deploy, open the Vercel production URL, tap **Enable audio**, and play.
+**Live:** [patchform.vercel.app](https://patchform.vercel.app)
+
+## License
+
+Keys and factory patches play as a demo.
+
+Unlock MIDI and the instrument designer with either:
+
+- **$200 lifetime** — one-time. You bring your own [xAI API key](https://console.x.ai) for the designer.
+- **Forge Pass ($24/mo)** — included with the rest of the WorkinWithAI Forge line. Designer uses the included API.
+
+Same login as Mix Forge / AuraMix at [workinwithai.com](https://workinwithai.com).
 
 ## Play
 
 - On-screen keys (light up when held)
 - Computer keys: **Z–M** and **Q–P**, **[ ]** octave, **space** silence
-- **Web MIDI** in/out — USB controllers, velocity, sustain, pitch bend, CCs
+- Web MIDI (licensed)
 - Waveforms, filter, ADSR, detune / osc 2 / sub / noise
-- Volume next to the scope
-- Describe an instrument to craft a patch (needs `XAI_API_KEY` on the server)
 
 Chrome, Edge, or Firefox. Safari does not expose Web MIDI.
-
-## Local
-
-```bash
-npm install
-npm run dev
-```
-
-Audio starts only after a user gesture. MIDI needs a secure origin (https or localhost).

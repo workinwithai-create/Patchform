@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 type MidiBarProps = {
   midi: MidiApi;
+  locked?: boolean;
 };
 
 function statusLabel(midi: MidiApi): string {
@@ -20,7 +21,7 @@ function statusLabel(midi: MidiApi): string {
   return midi.inputs.find((port) => port.id === midi.inputId)?.name ?? "Input";
 }
 
-export function MidiBar({ midi }: MidiBarProps) {
+export function MidiBar({ midi, locked = false }: MidiBarProps) {
   const live = midi.status === "on";
 
   return (
@@ -31,7 +32,7 @@ export function MidiBar({ midi }: MidiBarProps) {
         size="sm"
         className="shrink-0"
         onClick={() => void midi.connect()}
-        disabled={midi.status === "unsupported"}
+        disabled={locked || midi.status === "unsupported"}
         aria-pressed={live}
       >
         <span
@@ -46,8 +47,8 @@ export function MidiBar({ midi }: MidiBarProps) {
         MIDI
       </Button>
       <p className="min-w-0 truncate font-mono text-2xs text-faint">
-        {statusLabel(midi)}
-        {midi.sustain ? " · sustain" : ""}
+        {locked ? "Unlock to connect" : statusLabel(midi)}
+        {!locked && midi.sustain ? " · sustain" : ""}
       </p>
       {live ? (
         <div className="flex flex-wrap items-center gap-1.5">

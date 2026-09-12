@@ -38,12 +38,20 @@ export const craftPatch = createServerFn({ method: "POST" })
     if (typeof prompt !== "string") throw new Error("Describe an instrument first");
     const trimmed = prompt.trim().slice(0, 400);
     if (trimmed.length < 2) throw new Error("Describe an instrument first");
-    return { prompt: trimmed };
+    const rawKey = (input as { apiKey?: unknown }).apiKey;
+    const apiKey =
+      typeof rawKey === "string" && rawKey.trim().startsWith("xai-") && rawKey.trim().length >= 20
+        ? rawKey.trim().slice(0, 200)
+        : undefined;
+    return { prompt: trimmed, apiKey };
   })
   .handler(async ({ data }): Promise<CraftResult> => {
-    const apiKey = process.env.XAI_API_KEY;
+    const apiKey = data.apiKey || process.env.XAI_API_KEY;
     if (!apiKey) {
-      return { ok: false, error: "Instrument designer is unavailable right now." };
+      return {
+        ok: false,
+        error: "Add your xAI API key, or unlock with the Forge Pass.",
+      };
     }
 
     const controller = new AbortController();

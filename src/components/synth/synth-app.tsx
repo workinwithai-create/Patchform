@@ -6,7 +6,10 @@ import { Oscilloscope } from "@/components/synth/oscilloscope";
 import { PatchCrafter } from "@/components/synth/patch-crafter";
 import { WaveformSelect } from "@/components/synth/waveform-select";
 import { Button } from "@/components/ui/button";
+import { Paywall } from "@/components/synth/paywall";
+import { looksLikeXaiKey } from "@/lib/license";
 import { midiToName, octaveToMidiC } from "@/lib/synth/notes";
+import { useLicense } from "@/lib/use-license";
 import { DEFAULT_PATCH } from "@/lib/synth/presets";
 import { useSynth } from "@/lib/synth/use-synth";
 
@@ -24,9 +27,12 @@ function formatPct(value: number) {
 
 export function SynthApp() {
   const synth = useSynth();
+  const license = useLicense();
   const live = synth.status === "running";
   const startMidi = octaveToMidiC(synth.octave);
   const lastHeld = synth.held[synth.held.length - 1];
+  const locked = !license.entitled;
+  const needsKey = license.entitled && license.plan === "lifetime" && !looksLikeXaiKey(license.apiKey);
 
   const playKey = async (midi: number) => {
     await synth.enable();
@@ -52,7 +58,7 @@ export function SynthApp() {
             variant={live ? "secondary" : "primary"}
             onClick={() => {
               void synth.enable();
-              void synth.midi.connect();
+              if (!locked) void synth.midi.connect();
             }}
             aria-pressed={live}
           >
@@ -68,9 +74,23 @@ export function SynthApp() {
 
       <main className="min-h-0 min-w-0 overflow-y-auto px-4 py-3 md:px-6">
         <div className="flex flex-col gap-5">
+        <Paywall
+          checking={license.checking}
+          entitled={license.entitled}
+          signedIn={license.signedIn}
+          plan={license.plan}
+          email={license.email}
+          loginUrl={license.loginUrl}
+          apiKey={license.apiKey}
+          onApiKey={license.setApiKey}
+          error={license.error}
+        />
         <PatchCrafter
           patch={synth.patch}
           live={live}
+          locked={locked}
+          needsKey={needsKey}
+          apiKey={license.apiKey}
           onPatch={synth.setPatch}
           onPreview={() => synth.preview()}
         />
@@ -267,7 +287,7 @@ export function SynthApp() {
               </Button>
             </div>
             <div className="flex min-w-0 flex-col items-end gap-1">
-              <MidiBar midi={synth.midi} />
+              <MidiBar midi={synth.midi} locked={locked} />
               <p className="hidden text-xs text-faint md:block">
                 Computer: Z–M and Q–P · [ ] octave · space silence
               </p>
