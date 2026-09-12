@@ -1,0 +1,287 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0b0b0d;
+  --color-surface: #141417;
+  --color-surface-2: #1c1c20;
+  --color-surface-3: #26262b;
+  --color-ink: #0a0a0c;
+  --color-fg: #ecece8;
+  --color-muted: #8a8a92;
+  --color-faint: #5c5c64;
+  --color-accent: #6ec9c0;
+  --color-accent-hover: #82d4cc;
+  --color-accent-fg: #0b0b0d;
+  --color-accent-dim: #3d7a75;
+  --color-key-white: #f2efe6;
+  --color-key-white-on: #c8ebe7;
+  --color-key-black: #16161a;
+  --color-key-black-on: #2a5c58;
+  --color-key-label: #6a655c;
+  --color-danger: #c45c5c;
+  --color-grid: color-mix(in oklab, var(--color-fg) 8%, transparent);
+  --color-border: color-mix(in oklab, var(--color-fg) 12%, transparent);
+  --color-border-strong: color-mix(in oklab, var(--color-fg) 22%, transparent);
+
+  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Syne", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --text-micro: 0.65rem;
+  --text-2xs: 0.7rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-border-hover: 0 0 0 1px rgba(255, 255, 255, 0.13);
+  --scale-96: 0.96;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  .dock {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+@layer components {
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    height: 2.25rem;
+    padding: 0 0.85rem;
+    border-radius: 999px;
+    background: var(--color-surface-2);
+    color: var(--color-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: var(--shadow-border);
+    transition-property: background-color, color;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .chip:hover:not(:disabled) {
+    color: var(--color-fg);
+    background: var(--color-surface-3);
+  }
+
+  .chip.is-on {
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+    box-shadow: none;
+  }
+
+  .midi-select {
+    height: 2.25rem;
+    max-width: 9.5rem;
+    padding: 0 0.55rem;
+    border-radius: 999px;
+    background: var(--color-surface-2);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    box-shadow: var(--shadow-border);
+  }
+
+  .midi-select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent) 70%, transparent);
+  }
+
+  .seg {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 3px;
+    gap: 2px;
+    border-radius: 12px;
+    background: var(--color-ink);
+    box-shadow: var(--shadow-border);
+  }
+
+  .seg-btn {
+    display: inline-flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 2.5rem;
+    min-width: 0;
+    padding: 0 0.5rem;
+    border-radius: 9px;
+    color: var(--color-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition-property: background-color, color;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .seg-btn.is-on {
+    background: var(--color-surface-3);
+    color: var(--color-fg);
+  }
+
+  .wave-icon {
+    display: none;
+    height: 1rem;
+    width: 1.6rem;
+    flex-shrink: 0;
+  }
+
+  .keybed {
+    background: var(--color-ink);
+    border-radius: 12px;
+    padding: 6px;
+    overflow: hidden;
+  }
+
+  .key-white {
+    position: relative;
+    flex: 1 1 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0 10px;
+    margin-right: 2px;
+    border-radius: 0 0 6px 6px;
+    background: var(--color-key-white);
+    color: var(--color-faint);
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.12);
+    transition-property: background-color, transform, box-shadow;
+    transition-duration: 80ms;
+    transition-timing-function: ease-out;
+  }
+
+  .key-white:last-child {
+    margin-right: 0;
+  }
+
+  .key-white.is-on {
+    background: var(--color-key-white-on);
+    transform: translateY(1px);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .key-black {
+    position: absolute;
+    top: 6px;
+    z-index: 2;
+    height: 58%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 8px;
+    border-radius: 0 0 5px 5px;
+    background: var(--color-key-black);
+    color: var(--color-muted);
+    box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.08);
+    transition-property: background-color, transform;
+    transition-duration: 80ms;
+    transition-timing-function: ease-out;
+  }
+
+  .key-black.is-on {
+    background: var(--color-key-black-on);
+    color: var(--color-accent);
+    transform: translateY(1px);
+  }
+
+  .key-hint {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+  }
+
+  .key-hint-black {
+    color: var(--color-muted);
+  }
+
+  .key-name {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-key-label);
+  }
+
+  .level-meter {
+    position: relative;
+  }
+
+  .level-fill {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: calc(var(--level, 0) * 100%);
+    background: var(--color-accent);
+    opacity: 0.85;
+    transition: height 80ms linear;
+  }
+}
+
+@media (min-width: 640px) {
+  .wave-icon {
+    display: block;
+  }
+}
+
+@media (max-width: 639px) {
+  .key-hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key-white,
+  .key-black,
+  .chip,
+  .seg-btn,
+  .level-fill {
+    transition-duration: 0.01ms;
+  }
+
+  .key-white.is-on,
+  .key-black.is-on {
+    transform: none;
+  }
+}
