@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import {
   emptyLicense,
   fetchLicense,
-  isPaywallHost,
   readUserApiKey,
   writeUserApiKey,
   type LicenseStatus,
@@ -10,11 +9,7 @@ import {
 
 export function useLicense() {
   const [status, setStatus] = useState<LicenseStatus>(() =>
-    emptyLicense(
-      typeof window !== "undefined" && !isPaywallHost()
-        ? { entitled: true, plan: "preview" }
-        : { checking: true },
-    ),
+    emptyLicense({ checking: true }),
   );
   const [apiKey, setApiKeyState] = useState("");
 
